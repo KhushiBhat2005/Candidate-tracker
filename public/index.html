@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CIT - Candidate Interview Tracker</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>CIT - Candidate Interview Tracker</h1>
+    <p class="subtitle">Centralized Recruitment Management System</p>
+  </header>
+
+  <main>
+    <!-- Dashboard Stats -->
+    <section id="dashboard" class="dashboard-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <h3>Total Candidates</h3>
+          <p class="stat-number" id="stat-total">0</p>
+        </div>
+        <div class="stat-card recruited">
+          <h3>Recruited</h3>
+          <p class="stat-number" id="stat-recruited">0</p>
+        </div>
+        <div class="stat-card failed">
+          <h3>Failed</h3>
+          <p class="stat-number" id="stat-failed">0</p>
+        </div>
+        <div class="stat-card pending">
+          <h3>Pending</h3>
+          <p class="stat-number" id="stat-pending">0</p>
+        </div>
+        <div class="stat-card passed">
+          <h3>Passed</h3>
+          <p class="stat-number" id="stat-passed">0</p>
+        </div>
+      </div>
+      <div id="facility-stats" class="facility-stats">
+        <!-- Dynamically populated -->
+      </div>
+    </section>
+
+    <!-- Duplicate Warning -->
+    <div id="duplicate-warning" class="warning hidden">
+      <strong>⚠️ Duplicate FIN Detected!</strong>
+      <p id="duplicate-info"></p>
+      <button onclick="closeDuplicateWarning()">Dismiss</button>
+    </div>
+
+    <!-- Add / Edit Candidate Form -->
+    <section class="form-section">
+      <h2 id="form-title">Add Candidate</h2>
+      <form id="candidate-form" enctype="multipart/form-data">
+        <input type="hidden" id="candidate-id" />
+
+        <!-- Candidate Information -->
+        <fieldset>
+          <legend>Candidate Information</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="fin">FIN Number *</label>
+              <input type="text" id="fin" name="fin" required placeholder="e.g. 7XXXXXXX" maxlength="20" />
+              <small>Must be unique - system checks for duplicates</small>
+            </div>
+
+            <div class="form-group">
+              <label for="name">Full Name *</label>
+              <input type="text" id="name" name="name" required placeholder="Full name" maxlength="100" />
+            </div>
+
+            <div class="form-group">
+              <label for="phone">Contact Number</label>
+              <input type="tel" id="phone" name="phone" placeholder="+994 XX XXX XX XX" />
+            </div>
+
+            <div class="form-group">
+              <label for="sourceOfApplication">Source of Application</label>
+              <select id="sourceOfApplication" name="sourceOfApplication">
+                <option value="Walk-in">Walk-in</option>
+                <option value="Referral">Referral</option>
+                <option value="Agency">Agency</option>
+                <option value="Job Board">Job Board</option>
+                <option value="Internal">Internal</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="transportRequired">Transport Required?</label>
+              <select id="transportRequired" name="transportRequired">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="busRoute">Bus Route (if needed)</label>
+              <input type="text" id="busRoute" name="busRoute" placeholder="e.g. Route A, Route B" />
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Interview & Assessment -->
+        <fieldset>
+          <legend>Interview & Assessment</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="facility">Facility *</label>
+              <select id="facility" name="facility" required>
+                <option value="">-- Select Facility --</option>
+                <option value="A">Facility A</option>
+                <option value="B">Facility B</option>
+                <option value="C">Facility C</option>
+                <option value="D">Facility D</option>
+                <option value="E">Facility E</option>
+                <option value="F">Facility F</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="positionAppliedFor">Position Applied For</label>
+              <input type="text" id="positionAppliedFor" name="positionAppliedFor" placeholder="e.g. Production Engineer" />
+            </div>
+
+            <div class="form-group">
+              <label for="department">Department</label>
+              <input type="text" id="department" name="department" placeholder="e.g. Production, HR, IT" />
+            </div>
+
+            <div class="form-group">
+              <label for="interviewDate">Interview Date</label>
+              <input type="date" id="interviewDate" name="interviewDate" />
+            </div>
+
+            <div class="form-group">
+              <label for="interviewedBy">Interviewed By</label>
+              <input type="text" id="interviewedBy" name="interviewedBy" placeholder="Interviewer name" />
+            </div>
+
+            <div class="form-group">
+              <label for="interviewStatus">Interview Status</label>
+              <select id="interviewStatus" name="interviewStatus">
+                <option value="Pending">Pending</option>
+                <option value="Completed">Completed</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="result">Result</label>
+              <select id="result" name="result">
+                <option value="Pending">Pending</option>
+                <option value="Pass">Pass</option>
+                <option value="Fail">Fail</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="rejectionReason">Reason for Rejection (if Fail)</label>
+              <input type="text" id="rejectionReason" name="rejectionReason" placeholder="e.g. Failed technical test" />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="interviewerComments">Interviewer Comments</label>
+              <textarea id="interviewerComments" name="interviewerComments" rows="3" placeholder="Additional interview notes..."></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- Onboarding & Final Status -->
+        <fieldset>
+          <legend>Onboarding & Final Status</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="recruitmentStatus">Recruitment Status</label>
+              <select id="recruitmentStatus" name="recruitmentStatus">
+                <option value="Not Recruited">Not Recruited</option>
+                <option value="Recruited">Recruited</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="dateOfRecruitment">Date of Recruitment</label>
+              <input type="date" id="dateOfRecruitment" name="dateOfRecruitment" />
+            </div>
+
+            <div class="form-group full-width">
+              <label for="remarks">Remarks</label>
+              <textarea id="remarks" name="remarks" rows="2" placeholder="Any additional remarks..."></textarea>
+            </div>
+          </div>
+        </fieldset>
+
+        <!-- File Attachments -->
+        <fieldset>
+          <legend>File Attachments</legend>
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="cv">CV (PDF/DOC/DOCX)</label>
+              <input type="file" id="cv" name="cv" accept=".pdf,.doc,.docx" />
+            </div>
+
+            <div class="form-group">
+              <label for="idDoc">ID Document (PDF/JPG/PNG)</label>
+              <input type="file" id="idDoc" name="idDoc" accept=".pdf,.jpg,.jpeg,.png" />
+            </div>
+          </div>
+        </fieldset>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary" id="submit-btn">Add Candidate</button>
+          <button type="button" class="btn btn-secondary" id="cancel-btn" style="display:none;">Cancel</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Status message -->
+    <div id="message" class="message hidden"></div>
+
+    <!-- Filters & Search -->
+    <section class="filter-section">
+      <h3>Filters</h3>
+      <div class="filter-grid">
+        <input type="text" id="search" placeholder="Search by Name, FIN, or Position..." />
+        <select id="filterResult">
+          <option value="">All Results</option>
+          <option value="Pending">Pending</option>
+          <option value="Pass">Pass</option>
+          <option value="Fail">Fail</option>
+        </select>
+        <select id="filterFacility">
+          <option value="">All Facilities</option>
+          <option value="A">Facility A</option>
+          <option value="B">Facility B</option>
+          <option value="C">Facility C</option>
+          <option value="D">Facility D</option>
+          <option value="E">Facility E</option>
+          <option value="F">Facility F</option>
+        </select>
+        <select id="filterInterviewStatus">
+          <option value="">All Interview Status</option>
+          <option value="Pending">Pending</option>
+          <option value="Completed">Completed</option>
+        </select>
+        <button class="btn btn-small" onclick="clearFilters()">Clear Filters</button>
+      </div>
+    </section>
+
+    <!-- Candidates Table -->
+    <section class="table-section">
+      <div class="table-header">
+        <h2>Candidates</h2>
+        <span id="candidate-count" class="count">0 candidates</span>
+      </div>
+      <div class="table-wrapper">
+        <table id="candidates-table">
+          <thead>
+            <tr>
+              <th>FIN</th>
+              <th>Name</th>
+              <th>Position</th>
+              <th>Facility</th>
+              <th>Result</th>
+              <th>Interview Status</th>
+              <th>Contact</th>
+              <th>Files</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="candidates-body">
+            <tr><td colspan="9" class="loading">Loading candidates...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
